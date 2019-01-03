@@ -1,27 +1,23 @@
-#setwd("C:\\Users\\Mei\\Dropbox\\wangmei\\low_cost")
-setwd("~/Desktop/MeiCode") ### wd for laptop 
-
+#setwd("~/Desktop/MeiCode") ### wd for laptop 
+setwd("H:\\SpatioTemporal\\Modeling\\spatiotemp") ### wd for desktop 
+# load data pull from MESA air team 
 load("dr0281new.RData")
-### Agency cov
+# load agency data (data sartging 1/10/1999)
 Agency<-read.csv("AQS_2wkavg.csv")
+# make native_id a factor 
 Agency$native_id <- as.factor(Agency$native_id)
-
-##
-### where is the agency_from_gis data? 
-## 
-
-
+# load agency covariate data 
 Agency_gis <- agency_frm_gis
-
-
-##remove portland site
+# remove portland site from agency site data  
 Agency_gis<-Agency_gis[which(Agency_gis$latitude>46),]
 a<-Agency$native_id
 AQS_cov <- Agency_gis[Agency_gis$native_id %in% a, ]
+# check data upload 
 dim(AQS_cov)
-#18 831
+# 18 831 ==> 11 831 after remove portland site
 
-### Fixed cov
+# Fixed site covariates 
+# revove portland site from fixed site data 
 Fixed_gis<-pscaa_gis
 Fixed_gis<-Fixed_gis[which(Fixed_gis$latitude>46),]
 Fixed<-read.csv("Fixed_2wkavg.csv")
@@ -31,7 +27,7 @@ Fixed_cov <- Fixed_gis[Fixed_gis$native_id %in%  b, ]
 dim(Fixed_cov)
 #13 867
 
-### Low_cost cov
+# Shinyei site data and covariates  
 Low_cost<-read.csv("low_cost_shinyei_2wkavg.csv")
 Low_cost$native_id <-as.factor(Low_cost$native_id)
 Low_cost_gis<-low_cost_gis
@@ -41,7 +37,7 @@ Low_cost_cov$native_id <- Low_cost_cov$native_id_new
 dim(Low_cost_cov)
 #51 868
 
-###Uniform the GIS cov
+# Uniform the GIS covariates 
 Low_cost_cov <- Low_cost_cov[,colnames(Low_cost_cov) %in%  colnames(AQS_cov) ]
 Fixed_cov <- Fixed_cov[,colnames(Fixed_cov) %in%  colnames(AQS_cov) ]
 AQS_cov<-AQS_cov[,colnames(AQS_cov) %in%  colnames(Low_cost_cov) ]
@@ -51,7 +47,8 @@ AQS_cov<-AQS_cov[,colnames(AQS_cov) %in%  colnames(Low_cost_cov) ]
 #install.packages("numDeriv")
 #install.packages("plyr")
 #install.packages("plotrix")
-#devtools::load_all("SpatioTemporal")
+install.packages("devtools")
+devtools::load_all("SpatioTemporal")
 library("SpatioTemporal")
 library("numDeriv")
 library("plyr")
